@@ -1,0 +1,12 @@
+Metadata-Version: 2.4
+Name: flowlab-execution-broker
+Version: 0.0.0
+Requires-Python: >=3.12
+Requires-Dist: pydantic<3,>=2.6
+Requires-Dist: sqlalchemy[asyncio]<3,>=2.0
+Requires-Dist: asyncpg<1,>=0.29
+Provides-Extra: dev
+Requires-Dist: pytest<9,>=8; extra == "dev"
+Requires-Dist: pytest-asyncio<1,>=0.23; extra == "dev"
+Requires-Dist: ruff<1,>=0.13; extra == "dev"
+Requires-Dist: mypy<2,>=1.18; extra == "dev"
