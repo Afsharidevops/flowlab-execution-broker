@@ -25,7 +25,7 @@ class ExecutionJob(Base):
     workspace_id: Mapped[str] = mapped_column(String, index=True)
     command: Mapped[str] = mapped_column(String)
     arguments: Mapped[list[str]] = mapped_column(JSON, default=list)
-    status: Mapped[ExecutionStatus] = mapped_column(Enum(ExecutionStatus), default=ExecutionStatus.QUEUED)
+    status: Mapped[ExecutionStatus] = mapped_column(Enum(ExecutionStatus, values_callable=lambda obj: [e.value for e in obj]), default=ExecutionStatus.QUEUED)
     approval_policy: Mapped[str] = mapped_column(String, default="auto") # 'auto' or 'manual'
     lease_owner: Mapped[str | None] = mapped_column(String, nullable=True)
     lease_expires_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
