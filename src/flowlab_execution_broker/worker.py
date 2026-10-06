@@ -28,8 +28,11 @@ async def run_worker() -> None:
         db_url = db_url.replace("postgres://", "postgresql+asyncpg://", 1)
     
     engine = create_async_engine(db_url)
-    async with engine.begin() as conn:
-        await conn.run_sync(Base.metadata.create_all)
+    
+    if os.getenv("FLOWLAB_AUTO_CREATE_SCHEMA", "").lower() in ("1", "true", "yes"):
+        logger.info("Auto-creating schema for flowlab-execution-broker")
+        async with engine.begin() as conn:
+            await conn.run_sync(Base.metadata.create_all)
         
     SessionLocal = async_sessionmaker(engine, expire_on_commit=False)
     worker_id = str(uuid.uuid4())
