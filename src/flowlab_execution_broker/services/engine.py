@@ -17,7 +17,12 @@ class BrokerEngine:
         self.db = db
 
     async def submit_job(
-        self, tenant_id: str, workspace_id: str, command: str, arguments: list[str], policy: str = "auto"
+        self,
+        tenant_id: str,
+        workspace_id: str,
+        command: str,
+        arguments: list[str],
+        policy: str = "auto",
     ) -> ExecutionJob:
         if not self._is_command_safe(command):
             raise SecurityError(f"Command '{command}' is not permitted")
@@ -113,7 +118,7 @@ class BrokerEngine:
             if proc.returncode is None:
                 return False
             return proc.returncode == 0
-        except Exception:
+        except OSError:
             return False
 
     def _is_command_safe(self, command: str) -> bool:

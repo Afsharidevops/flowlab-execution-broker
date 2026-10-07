@@ -4,6 +4,7 @@ import os
 import signal
 import uuid
 
+from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
 
 from flowlab_execution_broker.models.domain import Base
@@ -14,10 +15,12 @@ logger = logging.getLogger("broker-worker")
 
 shutdown = False
 
+
 def handle_sigterm(sig: int, frame: object) -> None:
     global shutdown
     logger.info("Shutdown signal received")
     shutdown = True
+
 
 async def run_worker() -> None:
     signal.signal(signal.SIGTERM, handle_sigterm)
@@ -56,10 +59,11 @@ async def run_worker() -> None:
                 await broker.mark_done(job.id, success)
                 await session.commit()
                 logger.info("Job %s completed: success=%s", job.id, success)
-            except Exception as e:
-                logger.error("Broker loop error: %s", e)
+            except (OSError, SQLAlchemyError):
+                logger.exception("Broker loop error")
                 await session.rollback()
                 await asyncio.sleep(5)
+
 
 if __name__ == "__main__":
     asyncio.run(run_worker())
